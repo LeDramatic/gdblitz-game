@@ -1316,3 +1316,72 @@ nav {
     flex-direction: column;
   }
 }
+
+/* FIX: admin/lobby tables overflowing cards */
+.card {
+  overflow-x: auto;
+}
+
+.lobby-table {
+  min-width: 720px;
+}
+
+/* FIX: hide unused notices unless JS shows them */
+.submitted-notice,
+.eliminated-notice {
+  display: none;
+}
+
+/* FIX: palette layout */
+.palette-swatches {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.swatch,
+.palette-swatch {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  border-radius: 10px;
+  border: 2px solid #111;
+  overflow: hidden;
+}
+
+.swatch-tooltip {
+  display: none;
+}
+
+/* FIX: prevent color text from overlapping */
+.palette-item {
+  overflow: hidden;
+}
+
+.palette-name {
+  word-break: break-word;
+}
+
+/* FIX: leaderboard black-line issue */
+.leaderboard {
+  background: #fff;
+  padding: 0;
+}
+
+.lb-row {
+  min-height: 58px;
+  color: #111;
+  background: #fff;
+}
+
+.lb-name,
+.lb-score,
+.lb-rank {
+  color: #111;
+}
+
+/* FIX: big cards not too tall */
+.constraint-block {
+  min-height: 260px;
+}

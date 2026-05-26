@@ -58,12 +58,29 @@
 
 <header>
   <div class="logo">GD<span>BLITZ</span></div>
+
   <div class="header-right">
     <div class="user-badge" id="userBadge" style="display:none">
-      <span>Playing as <strong id="displayName">—</strong></span>
-      <button class="btn-tube btn-sm" onclick="changeName()">Change</button>
+      <span>
+        Playing as <strong id="displayName">—</strong>
+      </span>
+
+      <button
+        id="changeNameBtn"
+        class="btn-tube btn-sm"
+        onclick="changeName()"
+      >
+        Change
+      </button>
     </div>
-    <button class="btn-tube" onclick="openModal('adminModal')">Staff</button>
+
+    <button
+      id="staffBtn"
+      class="btn-tube"
+      onclick="openModal('adminModal')"
+    >
+      Staff
+    </button>
   </div>
 </header>
 
@@ -258,7 +275,7 @@
       sessionStorage.setItem('gdblitz_admin_role', data.role);
       sessionStorage.setItem('gdblitz_admin_username', data.username);
       closeModal('adminModal');
-      window.location.href = 'admin.html';
+      updateStaffUI();
     } catch(e) { err.textContent = 'Connection error.'; }
   };
 
@@ -363,6 +380,25 @@
     window.location.href = `lobby.html?id=${id}`;
   }
 
+  function updateStaffUI() {
+  const token = sessionStorage.getItem('gdblitz_admin_token');
+  const role = sessionStorage.getItem('gdblitz_admin_role');
+  const adminUsername = sessionStorage.getItem('gdblitz_admin_username');
+
+  const staffBtn = document.getElementById('staffBtn');
+  const nameBtn = document.getElementById('changeNameBtn');
+
+  if (token && staffBtn) {
+    staffBtn.textContent = 'PANEL';
+    staffBtn.onclick = () => window.location.href = 'admin.html';
+  }
+
+  if (adminUsername && nameBtn) {
+    nameBtn.textContent = adminUsername;
+  }
+}
+
+updateStaffUI();
   setInterval(loadLobbies, 10000);
 </script>
 </body>

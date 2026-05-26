@@ -856,6 +856,52 @@
     if (isMaster) loadAccounts();
   }
 
+  function updatePalettePreview() {
+  const preview = document.getElementById('palettePreview');
+
+  if (!preview) return;
+
+  const colors = Array.from(
+    document.querySelectorAll('#colorInputs input[type="color"]')
+  ).map(input => input.value);
+
+  preview.innerHTML = colors.map(color => `
+    <div class="palette-swatch"
+         style="background:${color}"
+         title="${color}">
+    </div>
+  `).join('');
+}
+
+window.syncColorText = function(index, value) {
+  const row = document.getElementById(`colorRow${index}`);
+
+  if (!row) return;
+
+  const textInput = row.querySelector('input[type="text"]');
+
+  if (textInput) {
+    textInput.value = value;
+  }
+
+  updatePalettePreview();
+};
+
+window.syncColorPicker = function(index, value) {
+  if (!/^#[0-9A-Fa-f]{6}$/.test(value)) return;
+
+  const row = document.getElementById(`colorRow${index}`);
+
+  if (!row) return;
+
+  const colorInput = row.querySelector('input[type="color"]');
+
+  if (colorInput) {
+    colorInput.value = value;
+  }
+
+  updatePalettePreview();
+};
   async function loadDashboard() {
     try {
       const res = await apiFetch('/admin/stats');

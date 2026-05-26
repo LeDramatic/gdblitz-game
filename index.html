@@ -368,6 +368,10 @@
         <label>Rounds</label>
         <input type="number" id="roundCount" min="1" max="10" value="3" />
       </div>
+       <div class="form-group">
+        <label>Themes</label>
+        <input type="number" id="themeCount" min="1" max="4" value="4" />
+      </div>
       <div class="form-group">
         <label>Build Time (min)</label>
         <input type="number" id="buildTime" min="10" max="120" value="30" />
@@ -400,10 +404,6 @@
   </div>
   <div class="lobby-list" id="lobbyList">
     <div class="loading">Loading...</div>
-  </div>
-  <div class="form-group">
-  <label>Themes</label>
-  <input type="number" id="themeCount" min="1" max="4" value="4" />
   </div>
 </main>
 
@@ -570,6 +570,7 @@
   };
 
   window.createLobby = async function() {
+    const themeCount = parseInt(document.getElementById('themeCount').value) || 4;
     const username = sessionStorage.getItem('gdblitz_username');
     if (!username) { alert('Enter your name first.'); return; }
     const name = document.getElementById('lobbyName').value.trim() || `${username}'s Lobby`;
@@ -586,7 +587,18 @@
     try {
       const res = await fetch(`${API}/lobbies`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, host_name: username, max_players: maxPlayers, rounds, build_time: buildTime, upload_time: uploadTime, is_private: isPrivate, password: password||null, session_id: sessionId })
+        body: JSON.stringify({
+         name,
+         host_name: username,
+         max_players: maxPlayers,
+         rounds,
+         build_time: buildTime,
+         upload_time: uploadTime,
+         theme_count: themeCount,
+         is_private: isPrivate,
+         password: password || null,
+         session_id: sessionId
+          })
       });
       const data = await res.json();
       if (!res.ok) { alert(data.error || 'Failed to create lobby.'); return; }

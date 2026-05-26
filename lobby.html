@@ -403,32 +403,65 @@
   if (!username) window.location.href = 'index.html';
 
   // ── SOCKET ──
-  socket.emit('join-lobby', lobbyId);
+socket.emit('join-lobby', lobbyId);
 
-  socket.on('lobby-updated', data => { lobbyData = data; renderLobby(data); });
-  socket.on('player-joined', () => fetchAndRender());
-  socket.on('player-left', () => fetchAndRender());
-  socket.on('game-started', ({ lobby, rounds, serverTime }) => {
-    lobbyData = lobby;
-    renderBuilding(lobby, rounds[0], serverTime);
-  });
-  socket.on('upload-phase', ({ serverTime, lobby }) => {
-    lobbyData = lobby;
-    renderUploading(lobby, serverTime);
-  });
-  socket.on('rating-phase', ({ lobby, round }) => {
-    lobbyData = lobby;
-    renderRating(round);
-  });
-  socket.on('next-round', ({ lobby, serverTime }) => {
-    lobbyData = lobby;
-    hasFinishedBuild = false;
-    hasUploaded = false;
-    isEliminated = false;
-    myRatings = {};
-    fetchRoundAndRender(lobby, serverTime);
-  });
-  socket.on('game-finished', () => { alert('Game over! Thanks for playing.'); window.location.href = 'index.html'; });
+socket.on('lobby-updated', async data => {
+  lobbyData = data;
+  await fetchAndRender();
+});
+
+socket.on('player-joined', async () => {
+  await fetchAndRender();
+});
+
+socket.on('player-left', async () => {
+  await fetchAndRender();
+});
+
+socket.on('player-finished-build', async () => {
+  await fetchAndRender();
+});
+
+socket.on('player-submitted', async () => {
+  await fetchAndRender();
+});
+
+socket.on('rating-submitted', async () => {
+  await fetchAndRender();
+});
+
+socket.on('game-started', ({ lobby, rounds, serverTime }) => {
+  lobbyData = lobby;
+  renderBuilding(lobby, rounds[0], serverTime);
+});
+
+socket.on('upload-phase', async ({ serverTime, lobby }) => {
+  lobbyData = lobby;
+  await fetchAndRender();
+  renderUploading(lobby, serverTime);
+});
+
+socket.on('rating-phase', async ({ lobby, round }) => {
+  lobbyData = lobby;
+  await fetchAndRender();
+  renderRating(round);
+});
+
+socket.on('next-round', async ({ lobby, serverTime }) => {
+  lobbyData = lobby;
+
+  hasFinishedBuild = false;
+  hasUploaded = false;
+  isEliminated = false;
+  myRatings = {};
+
+  await fetchRoundAndRender(lobby, serverTime);
+});
+
+socket.on('game-finished', () => {
+  alert('Game over! Thanks for playing.');
+  window.location.href = 'index.html';
+});
 
   // ── INIT ──
   window.addEventListener('DOMContentLoaded', async () => {

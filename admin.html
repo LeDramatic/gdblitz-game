@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <h1>Admin Panel Test</h1>
+  <pre id="out">Loading...</pre>
+
+  <script>
+    const API = 'https://gdblitz-backend.onrender.com';
+    const token = sessionStorage.getItem('gdblitz_admin_token');
+
+    if (!token) {
+      location.href = 'index.html';
+    }
+
+    fetch(`${API}/admin/stats`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+      .then(r => r.json())
+      .then(d => {
+        document.getElementById('out').textContent = JSON.stringify(d, null, 2);
+      })
+      .catch(e => {
+        document.getElementById('out').textContent = e.message;
+      });
+  </script>
+</body>
+</html>

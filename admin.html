@@ -38,6 +38,9 @@
     <div class="nav-item" onclick="switchPage('badwords', event)"><span>🚫</span> Bad Words</div>
     <div class="nav-item master-only hidden" id="accountsNav" onclick="switchPage('accounts', event)"><span>👑</span> Accounts</div>
     <div class="nav-item" onclick="switchPage('config', event)"><span>⚙</span> Config</div>
+  <div class="nav-item" onclick="switchPage('mainmenu', event)">
+  <span>🖼</span> Main Menu
+</div>
   </nav>
 
   <div class="content">
@@ -195,29 +198,158 @@
     </div>
 
     <div class="page" id="page-config">
-      <div class="page-title">Config</div>
-      <div class="page-sub">Simple backend config values. Leave blank if you do not use them yet.</div>
-      <div class="card">
-        <div class="card-title">Site Logo URL</div>
-        <div class="input-row">
-          <div class="form-group">
-            <label>Logo URL</label>
-            <input type="text" id="configLogoUrl" placeholder="https://..." />
-          </div>
-          <button class="btn solid" onclick="saveConfig('logo_url', document.getElementById('configLogoUrl').value)">SAVE</button>
-        </div>
+  <div class="page-title">Config</div>
+  <div class="page-sub">
+    Simple backend config values. Leave blank if you do not use them yet.
+  </div>
+
+  <div class="card">
+    <div class="card-title">Site Logo URL</div>
+
+    <div class="input-row">
+      <div class="form-group">
+        <label>Logo URL</label>
+
+        <input
+          type="text"
+          id="configLogoUrl"
+          placeholder="https://..."
+        />
       </div>
-      <div class="card">
-        <div class="card-title">Homepage Notice</div>
-        <div class="input-row">
-          <div class="form-group">
-            <label>Notice Text</label>
-            <input type="text" id="configNotice" placeholder="optional announcement..." />
-          </div>
-          <button class="btn solid" onclick="saveConfig('notice', document.getElementById('configNotice').value)">SAVE</button>
-        </div>
-      </div>
+
+      <button
+        class="btn solid"
+        onclick="saveConfig('logo_url', document.getElementById('configLogoUrl').value)"
+      >
+        SAVE
+      </button>
     </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Homepage Notice</div>
+
+    <div class="input-row">
+      <div class="form-group">
+        <label>Notice Text</label>
+
+        <input
+          type="text"
+          id="configNotice"
+          placeholder="optional announcement..."
+        />
+      </div>
+
+      <button
+        class="btn solid"
+        onclick="saveConfig('notice', document.getElementById('configNotice').value)"
+      >
+        SAVE
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-mainmenu">
+  <div class="page-title">Main Menu</div>
+
+  <div class="page-sub">
+    Customize homepage visuals and music.
+  </div>
+
+  <div class="card">
+    <div class="card-title">Background Image</div>
+
+    <div class="form-group">
+      <label>Background URL</label>
+
+      <input
+        type="text"
+        id="menuBgUrl"
+        placeholder="https://..."
+      />
+    </div>
+
+    <button
+      class="btn solid"
+      onclick="saveConfig('main_bg_url', document.getElementById('menuBgUrl').value)"
+    >
+      SAVE BACKGROUND
+    </button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Header Image</div>
+
+    <div class="form-group">
+      <label>Header URL</label>
+
+      <input
+        type="text"
+        id="menuHeaderUrl"
+        placeholder="https://..."
+      />
+    </div>
+
+    <button
+      class="btn solid"
+      onclick="saveConfig('main_header_url', document.getElementById('menuHeaderUrl').value)"
+    >
+      SAVE HEADER
+    </button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Music</div>
+
+    <div class="form-group">
+      <label>Music URL</label>
+
+      <input
+        type="text"
+        id="menuMusicUrl"
+        placeholder="https://..."
+      />
+    </div>
+
+    <div class="form-group">
+      <label>Music Name</label>
+
+      <input
+        type="text"
+        id="menuMusicName"
+        placeholder="menu music..."
+      />
+    </div>
+
+    <button
+      class="btn solid"
+      onclick="saveMenuMusic()"
+    >
+      SAVE MUSIC
+    </button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Overlay Opacity</div>
+
+    <input
+      type="range"
+      id="overlayOpacity"
+      min="0"
+      max="1"
+      step="0.05"
+      value="0.5"
+    />
+
+    <button
+      class="btn solid"
+      onclick="saveConfig('main_overlay_opacity', document.getElementById('overlayOpacity').value)"
+    >
+      SAVE OVERLAY
+    </button>
+  </div>
+</div>
 
   </div>
 </div>
@@ -740,16 +872,35 @@ window.syncColorPicker = function(index, value) {
   };
 
   async function loadConfig() {
-    try {
-      const res = await apiFetch('/admin/config');
-      const cfg = await res.json();
+  try {
+    const res = await apiFetch('/admin/config');
+    const cfg = await res.json();
 
-      document.getElementById('configLogoUrl').value = cfg.logo_url || '';
-      document.getElementById('configNotice').value = cfg.notice || '';
-    } catch {
-      // admin route may be restricted depending on role
-    }
+    document.getElementById('configLogoUrl').value =
+      cfg.logo_url || '';
+
+    document.getElementById('configNotice').value =
+      cfg.notice || '';
+
+    document.getElementById('menuBgUrl').value =
+      cfg.main_bg_url || '';
+
+    document.getElementById('menuHeaderUrl').value =
+      cfg.main_header_url || '';
+
+    document.getElementById('menuMusicUrl').value =
+      cfg.main_music_url || '';
+
+    document.getElementById('menuMusicName').value =
+      cfg.main_music_name || '';
+
+    document.getElementById('overlayOpacity').value =
+      cfg.main_overlay_opacity || 0.5;
+
+  } catch {
+    // admin route may be restricted depending on role
   }
+}
 
   window.saveConfig = async function(key, value) {
     const res = await apiFetch('/admin/config', {
@@ -766,6 +917,24 @@ window.syncColorPicker = function(index, value) {
 
     toast('Config saved.');
   };
+
+
+
+window.saveMenuMusic = async function() {
+  await saveConfig(
+    'main_music_url',
+    document.getElementById('menuMusicUrl').value
+  );
+
+  await saveConfig(
+    'main_music_name',
+    document.getElementById('menuMusicName').value
+  );
+
+  toast('Music saved.');
+};
+
+
 </script>
 </body>
 </html>

@@ -217,6 +217,7 @@
 
   // INIT
   window.addEventListener('DOMContentLoaded', () => {
+   loadMenuConfig(); 
     const saved = sessionStorage.getItem('gdblitz_username');
     if (saved) {
       document.getElementById('usernameOverlay').style.display = 'none';
@@ -399,7 +400,34 @@
 }
 
 updateStaffUI();
-  setInterval(loadLobbies, 10000);
+  
+  async function loadMenuConfig() {
+  try {
+    const res = await fetch(`${API}/admin/menu`);
+    const cfg = await res.json();
+
+    if (cfg.main_bg_url) {
+      document.body.style.backgroundImage =
+        `url(${cfg.main_bg_url})`;
+    }
+
+    const music = document.getElementById('menuMusic');
+
+    if (cfg.main_music_url) {
+      music.src = cfg.main_music_url;
+      music.volume = 0.4;
+    }
+
+  } catch(e) {
+    console.log('Failed to load menu config');
+  }
+}
+  
+  
+   setInterval(loadLobbies, 10000);
+
+
 </script>
+  <audio id="menuMusic" loop></audio>
 </body>
 </html>

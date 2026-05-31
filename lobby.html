@@ -203,9 +203,18 @@ socket.on('rating-submitted', async () => {
   await fetchAndRender();
 });
 
-socket.on('game-started', ({ lobby, rounds, serverTime }) => {
+socket.on('next-round', async ({ lobby, serverTime }) => {
   lobbyData = lobby;
-  renderBuilding(lobby, rounds[0], serverTime);
+
+  hasFinishedBuild = false;
+  hasUploaded = false;
+  isEliminated = false;
+  myRatings = {};
+
+  hide(['waitingPhase', 'uploadingPhase', 'ratingPhase', 'resultsPhase']);
+  show('buildingPhase');
+
+  await fetchRoundAndRender(lobby, serverTime);
 });
 
 socket.on('upload-phase', async ({ serverTime, lobby }) => {
@@ -315,11 +324,23 @@ socket.on('game-finished', () => {
     }
   }
 
-  function renderBuilding(lobby, round, serverTime) {
-    show('buildingPhase');
-    document.getElementById('bRound').textContent = lobby.current_round;
-    document.getElementById('hRound').textContent = `${lobby.current_round}/${lobby.rounds}`;
+function renderBuilding(lobby, round, serverTime) {
+  hide(['waitingPhase', 'uploadingPhase', 'ratingPhase', 'resultsPhase']);
+  show('buildingPhase');
 
+  hasFinishedBuild = false;
+  hasUploaded = false;
+
+  const finishBtn = document.getElementById('finishBuildBtn');
+  const notice = document.getElementById('finishedNotice');
+
+  if (finishBtn) finishBtn.style.display = 'inline-flex';
+  if (notice) notice.style.display = 'none';
+
+  document.getElementById('bRound').textContent = lobby.current_round;
+  document.getElementById('hRound').textContent = `${lobby.current_round}/${lobby.rounds}`;
+    
+    
     // Constraints
     renderList('structureList', round.structures || []);
     renderList('themeList', round.themes || []);

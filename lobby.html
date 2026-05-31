@@ -496,34 +496,33 @@ function renderBuilding(lobby, round, serverTime) {
   }
 
   // ── TIMERS ──
-   function startBuildTimer(serverTime, minutes) {
+function startBuildTimer(serverTime, minutes) {
   if (buildTimerInterval) clearInterval(buildTimerInterval);
 
-  const startMs = new Date(serverTime).getTime();
-  const endMs = startMs + (minutes * 60 * 1000);
+  const normalized =
+    typeof serverTime === 'string' && !serverTime.endsWith('Z')
+      ? serverTime + 'Z'
+      : serverTime;
 
-  console.log('START', {
-    serverTime,
-    startMs,
-    endMs,
-    now: Date.now(),
-    diff: endMs - Date.now()
-  });
+  const endMs =
+    new Date(normalized).getTime() +
+    (minutes * 60 * 1000);
 
   buildTimerInterval = setInterval(() => {
     const rem = Math.max(0, endMs - Date.now());
-
-    console.log('REM', rem);
 
     const m = Math.floor(rem / 60000);
     const s = Math.floor((rem % 60000) / 1000);
 
     const el = document.getElementById('buildTimer');
-    el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+
+    el.textContent =
+      `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+
+    el.className =
+      `timer${rem < 60000 ? ' danger' : ''}`;
 
     if (rem === 0) {
-      console.log('ELIMINATION TRIGGERED');
-
       clearInterval(buildTimerInterval);
 
       if (!hasFinishedBuild && !isEliminated) {

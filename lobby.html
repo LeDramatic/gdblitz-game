@@ -231,7 +231,16 @@ socket.on('rating-phase', async ({ lobby, round }) => {
 
 socket.on('game-started', async ({ lobby, rounds, serverTime }) => {
   lobbyData = lobby;
-  await fetchAndRender();
+
+  hasFinishedBuild = false;
+  hasUploaded = false;
+  isEliminated = false;
+  myRatings = {};
+
+  hide(['waitingPhase', 'uploadingPhase', 'ratingPhase', 'resultsPhase']);
+  show('buildingPhase');
+
+  renderBuilding(lobby, rounds[0], serverTime);
 });
 
 socket.on('game-finished', () => {

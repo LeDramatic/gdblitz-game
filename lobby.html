@@ -331,9 +331,6 @@ function renderBuilding(lobby, round, serverTime) {
   hide(['waitingPhase', 'uploadingPhase', 'ratingPhase', 'resultsPhase']);
   show('buildingPhase');
 
-  hasFinishedBuild = false;
-  hasUploaded = false;
-
   const finishBtn = document.getElementById('finishBuildBtn');
   const notice = document.getElementById('finishedNotice');
 
@@ -342,27 +339,27 @@ function renderBuilding(lobby, round, serverTime) {
 
   document.getElementById('bRound').textContent = lobby.current_round;
   document.getElementById('hRound').textContent = `${lobby.current_round}/${lobby.rounds}`;
-    
-    
-    // Constraints
-    renderList('structureList', round.structures || []);
-    renderList('themeList', round.themes || []);
-    renderPalettes('paletteList', round.palettes || []);
 
-    // Timer
-    startBuildTimer(serverTime || round.started_at, lobby.build_time);
+  // Constraints
+  renderList('structureList', round.structures || []);
+  renderList('themeList', round.themes || []);
+  renderPalettes('paletteList', round.palettes || []);
 
-    // Check if already finished
-    if (hasFinishedBuild) {
-      document.getElementById('finishBtn').style.display = 'none';
-      document.getElementById('finishedNotice').style.display = 'block';
-    }
-    if (isEliminated) {
-      document.getElementById('finishBtn').style.display = 'none';
-      document.getElementById('eliminatedNotice').style.display = 'block';
-    }
+  // Timer
+  startBuildTimer(serverTime || round.started_at, lobby.build_time);
+
+  // Check if already finished
+  if (hasFinishedBuild) {
+    document.getElementById('finishBtn').style.display = 'none';
+    document.getElementById('finishedNotice').style.display = 'block';
   }
 
+  if (isEliminated) {
+    document.getElementById('finishBtn').style.display = 'none';
+    document.getElementById('eliminatedNotice').style.display = 'block';
+  }
+}
+  
   function renderList(elId, items) {
     const el = document.getElementById(elId);
     if (!items.length) { el.innerHTML = '<div class="c-item"><span class="c-bullet"></span>None</div>'; return; }

@@ -496,9 +496,9 @@ function renderBuilding(lobby, round, serverTime) {
   }
 
   // ── TIMERS ──
-  console.log('BUILD TIMER START', serverTime, minutes);
-  function startBuildTimer(serverTime, minutes) {
-    if (buildTimerInterval) clearInterval(buildTimerInterval);
+    function startBuildTimer(serverTime, minutes) {
+    console.log('BUILD TIMER START', serverTime, minutes);
+      if (buildTimerInterval) clearInterval(buildTimerInterval);
     const endMs = new Date(serverTime).getTime() + (minutes * 60 * 1000);
     buildTimerInterval = setInterval(() => {
       const rem = Math.max(0, endMs - Date.now());

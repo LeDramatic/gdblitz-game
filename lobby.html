@@ -496,20 +496,44 @@ function renderBuilding(lobby, round, serverTime) {
   }
 
   // ── TIMERS ──
-    function startBuildTimer(serverTime, minutes) {
-    console.log('BUILD TIMER START', serverTime, minutes);
-      if (buildTimerInterval) clearInterval(buildTimerInterval);
-    const endMs = new Date(serverTime).getTime() + (minutes * 60 * 1000);
-    buildTimerInterval = setInterval(() => {
-      const rem = Math.max(0, endMs - Date.now());
-      const m = Math.floor(rem/60000);
-      const s = Math.floor((rem%60000)/1000);
-      const el = document.getElementById('buildTimer');
-      el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-      el.className = `timer${rem < 60000 ? ' danger' : ''}`;
-      if (rem === 0) { clearInterval(buildTimerInterval); if (!hasFinishedBuild && !isEliminated) { isEliminated = true; document.getElementById('eliminatedNotice').style.display = 'block'; document.getElementById('finishBtn').style.display = 'none'; } }
-    }, 500);
-  }
+   function startBuildTimer(serverTime, minutes) {
+  if (buildTimerInterval) clearInterval(buildTimerInterval);
+
+  const startMs = new Date(serverTime).getTime();
+  const endMs = startMs + (minutes * 60 * 1000);
+
+  console.log('START', {
+    serverTime,
+    startMs,
+    endMs,
+    now: Date.now(),
+    diff: endMs - Date.now()
+  });
+
+  buildTimerInterval = setInterval(() => {
+    const rem = Math.max(0, endMs - Date.now());
+
+    console.log('REM', rem);
+
+    const m = Math.floor(rem / 60000);
+    const s = Math.floor((rem % 60000) / 1000);
+
+    const el = document.getElementById('buildTimer');
+    el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+
+    if (rem === 0) {
+      console.log('ELIMINATION TRIGGERED');
+
+      clearInterval(buildTimerInterval);
+
+      if (!hasFinishedBuild && !isEliminated) {
+        isEliminated = true;
+        document.getElementById('eliminatedNotice').style.display = 'block';
+        document.getElementById('finishBtn').style.display = 'none';
+      }
+    }
+  }, 500);
+}
 
   function startUploadTimer(serverTime, minutes) {
     if (uploadTimerInterval) clearInterval(uploadTimerInterval);

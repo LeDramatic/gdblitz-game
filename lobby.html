@@ -204,15 +204,17 @@ socket.on('rating-submitted', async () => {
 });
 
 socket.on('next-round', async ({ lobby, serverTime }) => {
-  lobbyData = lobby;
+  console.log('NEXT ROUND EVENT');
 
   hasFinishedBuild = false;
   hasUploaded = false;
-  isEliminated = false;
-  myRatings = {};
 
-  hide(['waitingPhase', 'uploadingPhase', 'ratingPhase', 'resultsPhase']);
-  show('buildingPhase');
+  await fetchAndRender();
+
+  console.log('AFTER FETCH', {
+    hasFinishedBuild,
+    hasUploaded
+  });
 
   await fetchRoundAndRender(lobby, serverTime);
 });
@@ -401,18 +403,31 @@ function renderBuilding(lobby, round, serverTime) {
     });
   };
 
-  function renderUploading(lobby, serverTime) {
+ function renderUploading(lobby, serverTime) {
   hide(['waitingPhase','buildingPhase','ratingPhase','resultsPhase']);
   show('uploadingPhase');
+
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
-   startUploadTimer(serverTime || lobby.upload_started_at, lobby.upload_time);
-    if (hasUploaded) {
-      document.getElementById('uploadArea').style.display = 'none';
-      document.getElementById('submitBtn').style.display = 'none';
-      document.getElementById('uploadedNotice').style.display = 'block';
-    }
+  startUploadTimer(
+    serverTime || lobby.upload_started_at,
+    lobby.upload_time
+  );
+
+  const uploadArea = document.getElementById('uploadArea');
+  const submitBtn = document.getElementById('submitBtn');
+  const uploadedNotice = document.getElementById('uploadedNotice');
+
+  uploadArea.style.display = 'block';
+  submitBtn.style.display = 'inline-flex';
+  uploadedNotice.style.display = 'none';
+
+  if (hasUploaded) {
+    uploadArea.style.display = 'none';
+    submitBtn.style.display = 'none';
+    uploadedNotice.style.display = 'block';
   }
+}
 
  function renderRating(round) {
   hide(['waitingPhase','buildingPhase','uploadingPhase','resultsPhase']);
@@ -536,7 +551,14 @@ function startBuildTimer(serverTime, minutes) {
 
   function startUploadTimer(serverTime, minutes) {
     if (uploadTimerInterval) clearInterval(uploadTimerInterval);
-    const endMs = new Date(serverTime).getTime() + (minutes * 60 * 1000);
+    const normalized =
+  typeof serverTime === 'string' && !serverTime.endsWith('Z')
+    ? serverTime + 'Z'
+    : serverTime;
+
+const endMs =
+  new Date(normalized).getTime() +
+  (minutes * 60 * 1000);
     uploadTimerInterval = setInterval(() => {
       const rem = Math.max(0, endMs - Date.now());
       const m = Math.floor(rem/60000);

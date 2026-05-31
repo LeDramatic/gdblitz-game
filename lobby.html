@@ -339,11 +339,13 @@ function renderBuilding(lobby, round, serverTime) {
   hide(['waitingPhase', 'uploadingPhase', 'ratingPhase', 'resultsPhase']);
   show('buildingPhase');
 
-  const finishBtn = document.getElementById('finishBuildBtn');
+  const finishBtn = document.getElementById('finishBtn');
   const notice = document.getElementById('finishedNotice');
+  const eliminatedNotice = document.getElementById('eliminatedNotice');
 
   if (finishBtn) finishBtn.style.display = 'inline-flex';
   if (notice) notice.style.display = 'none';
+  if (eliminatedNotice) eliminatedNotice.style.display = 'none';
 
   document.getElementById('bRound').textContent = lobby.current_round;
   document.getElementById('hRound').textContent = `${lobby.current_round}/${lobby.rounds}`;

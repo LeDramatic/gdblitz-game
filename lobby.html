@@ -274,12 +274,20 @@ socket.on('game-finished', () => {
     } catch(e) { alert('Connection error.'); }
   }
 
-  async function fetchAndRender() {
-    const res = await fetch(`${API}/lobbies/${lobbyId}`);
-    const data = await res.json();
-    lobbyData = data;
-    renderLobby(data);
-  }
+ async function fetchAndRender() {
+  const res = await fetch(`${API}/lobbies/${lobbyId}`);
+  const data = await res.json();
+
+  lobbyData = data;
+
+  const me = data.players?.find(p => p.session_id === sessionId);
+
+  hasFinishedBuild = !!me?.submitted_build;
+  hasUploaded = !!me?.submitted_upload;
+  isEliminated = me?.status === 'eliminated';
+
+  renderLobby(data);
+}
 
   async function fetchRoundAndRender(lobby, serverTime) {
     const res = await fetch(`${API}/lobbies/${lobbyId}/round/${lobby.current_round}`);
